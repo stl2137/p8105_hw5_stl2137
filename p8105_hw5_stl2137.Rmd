@@ -30,12 +30,21 @@ filled_iris <- map_df(.x = iris_with_missing, ~fill_iris(.x))
 ```
 
 ## Problem 2
+
+Create a tidy dataframe containing data from all participants, including the subject ID, arm, and observations over time:
+
+Start with a dataframe containing all file names; the list.files function will help
+
+Iterate over file names and read in data for each subject using purrr::map and saving the result as a new variable in the dataframe
+
+Tidy the result; manipulate file names to include control arm and subject ID, make sure weekly observations are “tidy”, and do any other tidying that’s necessary
+
+Make a spaghetti plot showing observations on each subject over time, and comment on differences between groups.
+
 ```{r}
 
 long_study_total_list <- list.files(path = "./data", pattern = "*.csv") %>% 
-  map_df()
-
- 
+  map_df(~ read_csv(file.path("./data",.))) 
   
 
 ```
