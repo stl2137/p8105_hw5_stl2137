@@ -17,47 +17,26 @@ iris_with_missing = iris %>%
   mutate(Species = as.character(Species))
 ```
 
-
-There are two cases to address:
-
-For numeric variables, you should fill in missing values with the mean of non-missing values
-
-For character variables, you should fill in missing values with "virginica"
-
-Write a function that takes a vector as an argument; replaces missing values using the rules defined above; and returns the resulting vector. Apply this function to the columns of iris_with_missing using a map statement
-
-## How would I do this without using a function?
-```{r}
-sepal_mean_no_na <- iris_with_missing %>% 
-  summarise(mean(Sepal.Length, na.rm = TRUE))
-
-iris_with_missing %>% 
-  replace_na()
-```
-
-
 ```{r}
 fill_iris <- function(x) {
-  
+  if(is.character(x)) {
+    replace(x, is.na(x), "virginica")
+  } else if(is.numeric(x)) {
+    replace(x, is.na(x), mean(x, na.rm = TRUE))
+  }
 }
 
+filled_iris <- map_df(.x = iris_with_missing, ~fill_iris(.x))
 ```
 
 ## Problem 2
 ```{r}
-long_study_total_list <- list.files(path = "./data")
 
+long_study_total_list <- list.files(path = "./data", pattern = "*.csv") %>% 
+  map_df()
 
+ 
+  
 
-df <- list(
-  control_1 = "con_01.csv",
-  control_2 = "con_02.csv",
-  control_3 = "con_03.csv",
-  control_4 = "con_04.csv",
-  control_5 = "con_05.csv",
-  control_6 = "con_06.csv"
-)
-
-output <- map(df)
 ```
 
