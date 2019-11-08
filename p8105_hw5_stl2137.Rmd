@@ -43,3 +43,21 @@ fill_iris <- function(x) {
 
 ```
 
+## Problem 2
+```{r}
+long_study_total_list <- list.files(path = "./data")
+
+
+
+df <- list(
+  control_1 = "con_01.csv",
+  control_2 = "con_02.csv",
+  control_3 = "con_03.csv",
+  control_4 = "con_04.csv",
+  control_5 = "con_05.csv",
+  control_6 = "con_06.csv"
+)
+
+output <- map(df)
+```
+
