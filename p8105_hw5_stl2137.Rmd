@@ -42,17 +42,23 @@ Tidy the result; manipulate file names to include control arm and subject ID, ma
 Make a spaghetti plot showing observations on each subject over time, and comment on differences between groups.
 
 ```{r}
-
-long_study_total_list <- list.files(path = "./data", pattern = "*.csv") %>% 
-  map_df(~ read_csv(file.path("./data",.))) %>% 
+long_study_total_list <- list.files(path = "./data/", pattern = "*.csv", full.names = TRUE) %>% 
+  map_df(~read_csv(.)) %>% 
+  mutate(
+    subject_id = list.files("./data") %>% str_extract('.*(?=\\.csv$)')
+  ) %>% 
+  separate(subject_id, into = c("arm", "subject_number_id"), sep = "_") %>% 
   pivot_longer(
-    long_study_total_list,
+    week_1:week_8,
     names_to = "week",
-    names_prefix = "week_",
-    values_to = "observation"
+    names_prefix = "week_"
   )
   
+```
 
+
+```{r}
+read.csv("/Users/SabrinaLin/Documents/Fall_19_Data_Science_P8105/Homework/p8105_hw5_stl2137/data")
 ```
 
 ## Problem 3
@@ -62,14 +68,63 @@ In this problem, you will conduct a simulation to explore power in a simple line
 First set the following design elements:
 
 Fix n=30
+
 Fix xi1 as draws from a standard Normal distribution
+
 Fix β0=2
+
 Fix σ2=50
-Set β1=0. Generate 10000 datasets from the model
-yi=β0+β1xi1+ϵi
-with ϵi∼N[0,σ2]. For each dataset, save β̂ 1 and the p-value arising from a test of H:β1=0 using α=0.05. Hint: to obtain the estimate and p-value, use broom::tidy to clean the output of lm.
+
+Set β1=0. Generate 10000 datasets from the model yi=β0+β1xi1+ϵi with ϵi∼N[0,σ2]. 
+
+For each dataset, save β̂ 1 and the p-value arising from a test of H:β1=0 using α=0.05. Hint: to obtain the estimate and p-value, use broom::tidy to clean the output of lm.
 
 ```{r}
 
+sim_regression = function(n, beta0 = 2, beta1 = 0) {
+  
+  sim_data = tibble(
+    x = rnorm(30, mean = 0, sd = 1),
+    y = 2 + beta1 * x + rnorm(30, 0, 50)
+  )
+  
+  ls_fit = lm(y ~ x, data = sim_data)
+  
+  tibble(
+    term = broom::tidy(ls_fit)$term,
+    beta1_hat = broom::tidy(ls_fit)$estimate,
+    p_value = broom::tidy(ls_fit)$p.value
+  )
+}
+
+sim_regression(30, 2, 0)
+
+sim_results_0 = 
+  rerun(10000, sim_regression(30, 2, 0)) %>% 
+  bind_rows()
 ```
+
+```{r}
+n_list = list("n_30"  = 30, 
+              "n_60"  = 60, 
+              "n_120" = 120, 
+              "n_240" = 240)
+output = vector("list", length = 4)
+
+for (i in 1:4) {
+  output[[i]] = rerun(100, sim_regression(n_list[[i]])) %>% 
+    bind_rows
+}
+
+output = vector("list", length = 5000)
+
+for (i in 1:5000) {
+  
+  output[[i]] = sim_regression(n = 30)
+  
+}
+
+
+```
+
 
