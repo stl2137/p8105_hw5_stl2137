@@ -102,7 +102,7 @@ for (i in 1:7) {
   output[[i]] = rerun(1000, sim_regression(i-1)) %>% 
     bind_rows() %>% 
     mutate(
-      beta1 = i-1
+      beta1_group = i-1
     )
 }
 
@@ -112,16 +112,22 @@ sim_results_0_6 <-
   filter(term %in% "x")
 ```
 
-Make a plot showing the proportion of times the null was rejected (the power of the test) on the y axis and the true value of β1 on the x axis. Describe the association between effect size and power.
-
 ```{r}
 sim_results_0_6 %>% 
   filter(p_value < 0.05) %>% 
-  group_by() %>% 
-  summarise(proportion = n()/1000)
-
-
+  group_by(beta1_group) %>% 
+  summarise(proportion = n()/1000) %>% 
+  ggplot(aes(x = beta1_group, y = proportion)) +
+  geom_point() +
+  labs(
+    title = "Association between Effect Size and Power",
+    x = "Value of β1",
+    y = "Power of test"
+  ) +
+  scale_x_continuous(breaks = 0:6)
 ```
+
+* As the value of β1 increased, the power of the test also increased. 
 
 Make a plot showing the average estimate of β̂ 1 on the y axis and the true value of β1 on the x axis. Make a second plot (or overlay on the first) the average estimate of β̂ 1 only in samples for which the null was rejected on the y axis and the true value of β1 on the x axis. Is the sample average of β̂ 1 across tests for which the null is rejected approximately equal to the true value of β1? Why or why not?
 
