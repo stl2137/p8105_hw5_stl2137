@@ -117,7 +117,10 @@ sim_results_0_6 <-
 Make a plot showing the proportion of times the null was rejected (the power of the test) on the y axis and the true value of β1 on the x axis. Describe the association between effect size and power.
 
 ```{r}
-
+sim_results_0_6 %>% 
+  filter(p_value < 0.05) %>% 
+  group_by(beta1) %>% 
+  summarise(proportion = n()/1000)
 
 
 ```
