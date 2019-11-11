@@ -1,6 +1,6 @@
 ---
 title: "p8105_hw5_stl2137"
-output: html_document
+output: github_document
 ---
 
 ```{r setup, include=FALSE}
