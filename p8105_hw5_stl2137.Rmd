@@ -3,8 +3,6 @@ title: "p8105_hw5_stl2137"
 output: html_document
 ---
 
-### REMEMBER TO CHANGE BACK TO 10000 B/C IT TAKES TOO LONG TO RUN ### 
-
 ```{r setup, include=FALSE}
 library(tidyverse)
 library(viridis)
@@ -75,11 +73,7 @@ long_study_tidy %>%
   geom_path() 
 ```
 
-
 ## Problem 3
-
-### REMEMBER TO CHANGE BACK TO 10000 B/C IT TAKES TOO LONG TO RUN ### 
-
 
 ```{r}
 
@@ -102,7 +96,7 @@ sim_regression = function(beta1) {
 sim_regression(0)
 
 sim_results_0 <- 
-  rerun(1000, sim_regression(0)) %>% 
+  rerun(10000, sim_regression(0)) %>% 
   bind_rows() %>% 
   filter(term %in% "x")
 ```
@@ -114,7 +108,7 @@ output = vector("list", length = 7)
 
 for (i in 1:7) {
   
-  output[[i]] = rerun(1000, sim_regression(i-1)) %>% 
+  output[[i]] = rerun(10000, sim_regression(i-1)) %>% 
     bind_rows() %>% 
     mutate(
       beta1_group = i-1
@@ -131,7 +125,7 @@ sim_results_0_6 <-
 sim_results_0_6 %>% 
   filter(p_value < 0.05) %>% 
   group_by(beta1_group) %>% 
-  summarise(proportion = n()/1000) %>% 
+  summarise(proportion = n()/10000) %>% 
   ggplot(aes(x = beta1_group, y = proportion)) +
   geom_point() +
   labs(
