@@ -95,23 +95,21 @@ sim_results_0 <-
 ### REMEMBER TO CHANGE BACK TO 10000 B/C IT TAKES TOO LONG TO RUN ### 
 
 ```{r}
-output = vector("list", length = 6)
+output = vector("list", length = 7)
 
-for (i in 1:6) {
+for (i in 1:7) {
   
-  output[[i]] = rerun(1000, sim_regression(i)) %>% 
-    bind_rows()
-  
+  output[[i]] = rerun(1000, sim_regression(i-1)) %>% 
+    bind_rows() %>% 
+    mutate(
+      beta1 = i-1
+    )
 }
 
-sim_results_1_6 <-
+sim_results_0_6 <- 
   output %>% 
   bind_rows() %>% 
   filter(term %in% "x")
-
-
-sim_results_0_6 <-
-  bind_rows(sim_results_0, sim_results_1_6)
 ```
 
 Make a plot showing the proportion of times the null was rejected (the power of the test) on the y axis and the true value of β1 on the x axis. Describe the association between effect size and power.
@@ -119,7 +117,7 @@ Make a plot showing the proportion of times the null was rejected (the power of 
 ```{r}
 sim_results_0_6 %>% 
   filter(p_value < 0.05) %>% 
-  group_by(beta1) %>% 
+  group_by() %>% 
   summarise(proportion = n()/1000)
 
 
