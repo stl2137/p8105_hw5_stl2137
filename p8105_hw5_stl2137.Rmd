@@ -24,6 +24,8 @@ scale_fill_discrete = scale_fill_viridis_d
 theme_set(theme_minimal() + theme(legend.position = "bottom"))
 ```
 
+## Problem 1
+
 ```{r}
 set.seed(10)
 
@@ -70,7 +72,10 @@ long_study_tidy <- list.files(path = "./data/", pattern = "*.csv", full.names = 
 long_study_tidy %>% 
   group_by(arm, subject_number_id) %>% 
   ggplot(aes(x = week, y = observation, group = arm, color = arm)) +
-  geom_path() 
+  geom_path() +
+  labs(
+    title = "Observations of Subjects Over 8 Weeks"
+  )
 ```
 
 ## Problem 3
@@ -101,7 +106,6 @@ sim_results_0 <-
   filter(term %in% "x")
 ```
 
-### REMEMBER TO CHANGE BACK TO 10000 B/C IT TAKES TOO LONG TO RUN ### 
 
 ```{r}
 output = vector("list", length = 7)
@@ -170,7 +174,5 @@ null_rejected_beta_hat_vs_true <- sim_results_0_6 %>%
 
 beta_hat_vs_true + null_rejected_beta_hat_vs_true
 ```
-
-Is the sample average of β̂ 1 across tests for which the null is rejected approximately equal to the true value of β1? Why or why not?
 
 The sample average of beta hat1 across tests for which the null is rejected is not equal to the true values of beta1. Because we filter for beta hat values where the null is rejected, the average of these beta hats is skewed since the lower true values of beta1 have lower power as shown previously. Lower power increases the probability of committing a type 2 error. 
