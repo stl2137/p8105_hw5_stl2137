@@ -3,6 +3,8 @@ title: "p8105_hw5_stl2137"
 output: html_document
 ---
 
+### REMEMBER TO CHANGE BACK TO 10000 B/C IT TAKES TOO LONG TO RUN ### 
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
@@ -61,63 +63,68 @@ long_study_tidy %>%
 
 ## Problem 3
 
-In this problem, you will conduct a simulation to explore power in a simple linear regression.
+### REMEMBER TO CHANGE BACK TO 10000 B/C IT TAKES TOO LONG TO RUN ### 
 
-First set the following design elements:
-
-Fix n=30
-
-Fix xi1 as draws from a standard Normal distribution
-
-Fix β0=2
-
-Fix σ2=50
-
-Set β1=0. Generate 10000 datasets from the model yi=β0+β1xi1+ϵi with ϵi∼N[0,σ2]. 
-
-For each dataset, save β̂ 1 and the p-value arising from a test of H:β1=0 using α=0.05. Hint: to obtain the estimate and p-value, use broom::tidy to clean the output of lm.
 
 ```{r}
 
-sim_regression = function(n, beta0 = 2, beta1 = 0) {
+sim_regression = function(beta1) {
   
   sim_data = tibble(
     x = rnorm(30, mean = 0, sd = 1),
-    y = 2 + beta1 * x + rnorm(30, 0, 50)
+    y = 2 + beta1 * x + rnorm(30, 0, sqrt(50))
   )
   
   ls_fit = lm(y ~ x, data = sim_data)
   
   tibble(
-    term = broom::tidy(ls_fit)$term,
-    beta1_hat = broom::tidy(ls_fit)$estimate,
-    p_value = broom::tidy(ls_fit)$p.value
+    term = pull(broom::tidy(ls_fit), term),
+    beta1_hat = pull(broom::tidy(ls_fit), estimate),
+    p_value = pull(broom::tidy(ls_fit), p.value)
   )
 }
 
-sim_regression(30, 2, 0)
+sim_regression(0)
 
 sim_results_0 <- 
-  rerun(1000, sim_regression(30, 2, 0)) %>% 
-  bind_rows()
+  rerun(1000, sim_regression(0)) %>% 
+  bind_rows() %>% 
+  filter(term %in% "x")
 ```
 
 ### REMEMBER TO CHANGE BACK TO 10000 B/C IT TAKES TOO LONG TO RUN ### 
 
 ```{r}
-
 output = vector("list", length = 6)
 
 for (i in 1:6) {
   
-  output[[i]] = rerun(1000, sim_regression(30, 2, i)) %>% 
+  output[[i]] = rerun(1000, sim_regression(i)) %>% 
     bind_rows()
   
 }
 
 sim_results_1_6 <-
   output %>% 
-  bind_rows()
+  bind_rows() %>% 
+  filter(term %in% "x")
+
+
+sim_results_0_6 <-
+  bind_rows(sim_results_0, sim_results_1_6)
 ```
 
+Make a plot showing the proportion of times the null was rejected (the power of the test) on the y axis and the true value of β1 on the x axis. Describe the association between effect size and power.
+
+```{r}
+
+
+
+```
+
+Make a plot showing the average estimate of β̂ 1 on the y axis and the true value of β1 on the x axis. Make a second plot (or overlay on the first) the average estimate of β̂ 1 only in samples for which the null was rejected on the y axis and the true value of β1 on the x axis. Is the sample average of β̂ 1 across tests for which the null is rejected approximately equal to the true value of β1? Why or why not?
+
+```{r}
+
+```
 
