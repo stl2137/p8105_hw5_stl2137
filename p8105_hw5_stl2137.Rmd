@@ -31,8 +31,6 @@ filled_iris <- map_df(.x = iris_with_missing, ~fill_iris(.x))
 
 ## Problem 2
 
-Create a tidy dataframe containing data from all participants, including the subject ID, arm, and observations over time:
-
 ```{r}
 long_study_tidy <- list.files(path = "./data/", pattern = "*.csv", full.names = TRUE) %>% 
   map_df(~read_csv(.)) %>% 
@@ -51,14 +49,13 @@ long_study_tidy <- list.files(path = "./data/", pattern = "*.csv", full.names = 
   ) 
 ```
 
-Make a spaghetti plot showing observations on each subject over time, and comment on differences between groups.
+* The experimental group over the 8 weeks have a trend of increasing observations compared with the control group observations over the 8 weeks. 
 
 ```{r}
 long_study_tidy %>% 
   group_by(arm, subject_number_id) %>% 
   ggplot(aes(x = week, y = observation, group = arm, color = arm)) +
   geom_path() 
-           
 ```
 
 
@@ -100,32 +97,27 @@ sim_regression = function(n, beta0 = 2, beta1 = 0) {
 
 sim_regression(30, 2, 0)
 
-sim_results_0 = 
-  rerun(10000, sim_regression(30, 2, 0)) %>% 
+sim_results_0 <- 
+  rerun(1000, sim_regression(30, 2, 0)) %>% 
   bind_rows()
 ```
 
+### REMEMBER TO CHANGE BACK TO 10000 B/C IT TAKES TOO LONG TO RUN ### 
+
 ```{r}
-n_list = list("n_30"  = 30, 
-              "n_60"  = 60, 
-              "n_120" = 120, 
-              "n_240" = 240)
-output = vector("list", length = 4)
 
-for (i in 1:4) {
-  output[[i]] = rerun(100, sim_regression(n_list[[i]])) %>% 
-    bind_rows
-}
+output = vector("list", length = 6)
 
-output = vector("list", length = 5000)
-
-for (i in 1:5000) {
+for (i in 1:6) {
   
-  output[[i]] = sim_regression(n = 30)
+  output[[i]] = rerun(1000, sim_regression(30, 2, i)) %>% 
+    bind_rows()
   
 }
 
-
+sim_results_1_6 <-
+  output %>% 
+  bind_rows()
 ```
 
 
